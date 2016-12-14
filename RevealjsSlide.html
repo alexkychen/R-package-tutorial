@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Alex Chen" />
+  <meta name="author" content="EDIT" />
+  <meta name="dcterms.date" content="2016-12-14" />
+  <title>How to create an R package and use Git &amp; Github for version control</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="RevealjsSlide_files/reveal.js-3.3.0/css/reveal.css"/>
+
+
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+
+<link rel="stylesheet" href="RevealjsSlide_files/reveal.js-3.3.0/css/theme/serif.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="custom.css"/>
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'RevealjsSlide_files/reveal.js-3.3.0/css/print/pdf.css' : 'RevealjsSlide_files/reveal.js-3.3.0/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <!--[if lt IE 9]>
+    <script src="RevealjsSlide_files/reveal.js-3.3.0/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">How to create an R package and use Git &amp; Github for version control</h1>
+  <h1 class="subtitle"><hr /></h1>
+    <h2 class="author">Alex Chen</h2>
+    <h2 class="author"><small>EDIT</small></h2>
+    <h3 class="date"><small>14 December 2016</small></h3>
+</section>
+
+<section id="advantages-of-building-an-r-package" class="slide level2">
+<h1>Advantages of building an R package</h1>
+<ul>
+<li class="fragment"><p>Use functions and turn hundreds lines of code to a single or few lines of code.</p></li>
+<li class="fragment"><p>Orgainze your R script, data, and documentation in a well-defined structure.</p></li>
+<li class="fragment"><p>Collaborate and share your methods with others. Editing history traceable via git control.</p></li>
+<li class="fragment"><p>Use ‘R CMD check’ to validate your R script.</p></li>
+<li class="fragment"><p>Publishable work</p></li>
+</ul>
+<aside class="notes">
+You may wonder why I would create my own package and what I can benefit from. Actually, there’re quite a few advantages. First, a package basically comprises a set of functions, and you can pack your hundred lines<br />Second, when you’re building your own package, it kind of forces you to organize… Third, creating a package actually makes it easier to collaborate and share… Fourth, it’s probably not the attractive one, but you can use R built-in function to validate your R script Lastly, an R package itself can be a publishable work.
+</aside>
+</section>
+<section id="r-package-structure" class="slide level2">
+<h1>R package structure</h1>
+<p><strong>A minimal package should include:</strong></p>
+<ul>
+<li class="fragment"><p>R functions (saved in .R files)</p></li>
+<li class="fragment"><p>Metadata (DESCRIPTION file)</p></li>
+<li class="fragment"><p>Namespace (NAMESPACE file generated via roxygen2; connect your package to others)</p></li>
+<li class="fragment"><p>Documentation (generated via roxygen2; help page)</p></li>
+<li class="fragment"><p>Vignette (user guide)</p></li>
+</ul>
+<aside class="notes">
+Here are some basic components of an R package. First is the R functions… The most important content in an R package in the functions, so we will create an R package by starting to write R functions.
+</aside>
+</section>
+<section id="writing-r-functions-can-save-your-time-down-the-road" class="slide level2">
+<h1>Writing R functions can save your time down the road</h1>
+<p><img src="RevealjsSlide_files/figure-revealjs/unnamed-chunk-1-1.png" width="768" /></p>
+<aside class="notes">
+Here is the plot to show you the difference between a function writer and non-function writer. If you are not a function writer, the time your spend on analyzing data or crafting your code tends to increase as your data size and complexity increase. However, if you’r a function writer, you may spend a little more time at the beginning, but it will save your time down the road.
+</aside>
+</section>
+<section id="how-to-write-a-function" class="slide level2">
+<h1>How to write a function</h1>
+<pre class="sourceCode r"><code class="sourceCode r">Your_Function_Name &lt;-<span class="st"> </span>function( Your_Variables ){
+  <span class="co">#Do something here</span>
+}</code></pre>
+<div class="fragment">
+<p>Fecundity = a x Length <sup>b</sup></p>
+</div>
+<div class="fragment">
+<pre class="sourceCode r"><code class="sourceCode r">fecundity &lt;-<span class="st"> </span>function(L){
+  y &lt;-<span class="st"> </span><span class="fl">0.002</span>*(L^<span class="dv">3</span>)
+  <span class="kw">return</span>(y)
+}</code></pre>
+</div>
+<div class="fragment">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fecundity</span>(<span class="dv">36</span>)</code></pre>
+<pre><code>## [1] 93.312</code></pre>
+</div>
+</section>
+<section id="how-to-write-a-function-1" class="slide level2">
+<h1>How to write a function</h1>
+<p>Fecundity = a x Length <sup>b</sup></p>
+<pre class="sourceCode r"><code class="sourceCode r">fecundity &lt;-<span class="st"> </span>function(L, a, b){
+  y &lt;-<span class="st"> </span>a*(L^b)
+  <span class="kw">return</span>(y)
+}</code></pre>
+<div class="fragment">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fecundity</span>(<span class="dt">L=</span><span class="dv">36</span>, <span class="dt">a=</span><span class="fl">0.002</span>, <span class="dt">b=</span><span class="dv">3</span>)</code></pre>
+<pre><code>## [1] 93.312</code></pre>
+</div>
+<div class="fragment">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fecundity</span>(<span class="dt">L=</span><span class="dv">36</span>, <span class="dt">a=</span><span class="fl">0.2</span>, <span class="dt">b=</span><span class="dv">3</span>)</code></pre>
+<pre><code>## [1] 9331.2</code></pre>
+</div>
+</section>
+<section id="make-your-function-useful" class="slide level2">
+<h1>Make your function useful</h1>
+<p>Use conditional statement to choose an analytical method</p>
+<pre class="sourceCode r"><code class="sourceCode r">myFunction &lt;-<span class="st"> </span>function(<span class="dt">method=</span><span class="st">&quot;A&quot;</span>){
+  
+  if(method==<span class="st">&quot;A&quot;</span>){
+    <span class="co">#Analyze data in this way</span>
+  
+  }else if(method==<span class="st">&quot;B&quot;</span>){
+    <span class="co">#Analyze data in that way</span>
+  
+  }else if(method==<span class="st">&quot;C&quot;</span>){
+    <span class="co">#Analzye data in that way</span>
+    
+  }
+}</code></pre>
+</section>
+<section id="start-an-r-package-with-git-version-control" class="slide level2">
+<h1>Start an R package with git version control</h1>
+<p>Your R package is built in your computer; a copy can be saved in the cloud. They’re syncronized via Git.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Local</th>
+<th style="text-align: center;">Cloud</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">storage space</td>
+<td style="text-align: center;">Your PC</td>
+<td style="text-align: center;">Github.com</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">software</td>
+<td style="text-align: center;">RStudio</td>
+<td style="text-align: center;">Git</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="start-an-r-package" class="slide level2">
+<h1>Start an R package</h1>
+<ul>
+<li class="fragment"><p>Install R, RStudio, and <a href="https://git-scm.com/downloads">Git</a> in your computer</p></li>
+<li class="fragment"><p>Create a Github account <a href="http://github.com">www.github.com</a></p></li>
+<li class="fragment"><p><a href="pics/ScreenShot-Github-create-a-respository.png">Create a new repository</a> / <a href="pics/ScreenShot-Github-copy-link.png">Copy the repository’s link</a></p></li>
+<li class="fragment">Create an R project from RStudio
+<ol type="1">
+<li class="fragment">Open a new project</li>
+<li class="fragment"><a href="pics/ScreenShot-start-package-1-select-version-control.png">Select version control</a></li>
+<li class="fragment"><a href="pics/ScreenShot-start-package-2-select-Git.png">Select Git</a></li>
+<li class="fragment"><a href="pics/ScreenShot-start-package-3-paste-URL.png">Paste URL</a></li>
+</ol></li>
+<li class="fragment"><p>Install library <code>devtools</code> and <code>roxygen2</code></p></li>
+<li class="fragment"><p>Set up R configuration</p></li>
+</ul>
+</section>
+<section id="r-configuration-setup" class="slide level2">
+<h1>R configuration setup</h1>
+<ol type="1">
+<li class="fragment"><p>Select <strong>Build</strong> and then <strong>Configure Build Tools</strong> on <a href="pics/ScreenShot-Rconfigure-1-ConfigureBuildTools.png">menu bar</a></p></li>
+<li class="fragment"><p>Select <strong>Package</strong> in the pop-up window</p></li>
+<li class="fragment"><p>Check and configure <a href="pics/ScreenShot-Rconfigure-2-RoxygenOptions.png">Roxygen options</a></p></li>
+<li class="fragment"><p>Create folders <strong>R</strong> and <strong>man</strong></p></li>
+<li class="fragment"><p>Create a text file named <strong>DESCRIPTION</strong></p></li>
+</ol>
+</section>
+<section id="edit-description-file" class="slide level2">
+<h1>Edit <strong>DESCRIPTION</strong> file</h1>
+<p>Include the following information:</p>
+<pre class="sourceCode r"><code class="sourceCode r">Package:<span class="st"> </span>MyRpackage
+Version:<span class="st"> </span><span class="fl">1.0</span>
+Title:<span class="st"> </span>This is title of MyRpackage
+Author:<span class="st"> </span>Alex Chen
+Maintainer:<span class="st"> </span>Alex Chen &lt;chen<span class="fl">.1735</span>@osu.edu&gt;
+Description:<span class="st"> </span>A brief description about MyRpackage
+Depends:<span class="st"> </span><span class="kw">R</span> (&gt;=<span class="st"> </span><span class="fl">3.1.0</span>)
+License:<span class="st"> </span><span class="kw">GPL</span> (&gt;=<span class="st"> </span><span class="dv">2</span>)
+Imports:<span class="st"> </span>[Put other packages here if needed]</code></pre>
+<p>More details about DESCRIPTION</p>
+<p><a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file">R official site</a></p>
+<p><a href="http://r-pkgs.had.co.nz/description.html">by Hadley Wickham</a></p>
+</section>
+<section id="write-r-function-files" class="slide level2">
+<h1>Write R function files</h1>
+<p>Create function files (e.g., fecundity.R)<br />and save them in the <strong>R</strong> folder</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#&#39; A title of your function</span>
+<span class="co">#&#39;</span>
+<span class="co">#&#39; A short description about the function.</span>
+<span class="co">#&#39; @param L fish length</span>
+<span class="co">#&#39; @param a constant a</span>
+<span class="co">#&#39; @param b constant b</span>
+<span class="co">#&#39; @return This function returns fish fecundity</span>
+<span class="co">#&#39; @export</span>
+<span class="co">#&#39; @examples</span>
+<span class="co">#&#39; fecundity(36, 0.2, 3)</span>
+
+fecundity &lt;-<span class="st"> </span>function(L, a, b){
+  y &lt;-<span class="st"> </span>a*(L^b)
+  <span class="kw">return</span>(y)
+}</code></pre>
+<p>We use <a href="https://cran.r-project.org/web/packages/roxygen2/README.html"><strong>roxygen2</strong></a> to generate functions’ documentation.</p>
+</section>
+<section id="build-your-package-in-r" class="slide level2">
+<h1>Build your package in R</h1>
+<ul>
+<li class="fragment"><p>Click <strong>Build &amp; Reload</strong> under <a href="pics/ScreenShot-BuildReloadPackage-1-click-Build-Reload.png"><strong>Build</strong> menu</a></p></li>
+<li class="fragment"><p>Fix any issue if build not successful</p></li>
+<li class="fragment"><p>Make sure to rebuild if any change was made</p></li>
+<li class="fragment"><p>Try <code>?fecundiy</code> to see if help page shows up</p></li>
+</ul>
+</section>
+<section id="sync-with-github-repository" class="slide level2">
+<h1>Sync with Github repository</h1>
+<ul>
+<li class="fragment"><p>Make sure the <a href="https://git-scm.com/downloads">Git program</a> was installed.</p></li>
+<li class="fragment"><p>Click <strong>Commit</strong> under <strong>Git</strong> <a href="pics/ScreenShot-GitSync-1-click-commit-under-git.png">menu</a></p></li>
+<li class="fragment"><p>Check files and add commit message and then hit <a href="pics/ScreenShot-GitSync-2-check-commit-message.png"><strong>commit</strong></a></p></li>
+<li class="fragment"><p>Close commit message <a href="pics/ScreenShot-GitSync-3-git-commit.png">window</a></p></li>
+<li class="fragment"><p>Click <a href="pics/ScreenShot-GitSync-4-git-push.png"><strong>Push</strong></a> button to upload files to Github repository</p></li>
+<li class="fragment"><p>Go to your Github site and see if files are updated</p></li>
+</ul>
+</section>
+<section id="exercise" class="slide level2">
+<h1>Exercise</h1>
+<ul>
+<li class="fragment"><p>Go ahead and create a second R function</p></li>
+<li class="fragment"><p>Rebuild your package locally, and then upload the file to your Github</p></li>
+<li class="fragment"><p>Install the package of a person next to you. Use the following code:</p></li>
+</ul>
+<div class="fragment">
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+
+<span class="kw">install_github</span>(<span class="st">&quot;ACCOUNT/XPACKAGE&quot;</span>)</code></pre>
+</div>
+</section>
+<section id="handle-identical-function-names" class="slide level2">
+<h1>Handle identical function names</h1>
+<ul>
+<li class="fragment"><p>Import the library: <code>library(XPACKAGE)</code></p></li>
+<li class="fragment"><p>Type <code>?fecundity</code> in R console (There should be two <em>fecundity</em> functions associated with different packages)</p></li>
+<li class="fragment"><p>Type <code>?XPACKAGE::fecundity</code> to see the help page</p></li>
+<li class="fragment"><p>Click <strong>Index</strong> at the bottom to see the second function</p></li>
+<li class="fragment"><p>Run the second function to see if it works</p></li>
+</ul>
+</section>
+<section id="further-resources" class="slide level2">
+<h1>Further resources</h1>
+<p><a href="https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/">One-page tutorial</a> (by Hilary Parker)</p>
+<p><a href="http://kbroman.org/pkg_primer/">R package primer</a> (by Karl Broman)</p>
+<p><a href="http://r-pkgs.had.co.nz/">R packages</a> (by Hadley Wickham)</p>
+<p><a href="https://cran.r-project.org/doc/manuals/r-release/R-exts.html">R official document</a></p>
+<h3 id="section"><sub>~</sub></h3>
+<h3 id="happy-coding">Happy coding!</h3>
+</section>
+    </div>
+  </div>
+
+  <script src="RevealjsSlide_files/reveal.js-3.3.0/lib/js/head.min.js"></script>
+  <script src="RevealjsSlide_files/reveal.js-3.3.0/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Transition style
+        transition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'RevealjsSlide_files/reveal.js-3.3.0/plugin/notes/notes.js', async: true },
+          { src: 'RevealjsSlide_files/reveal.js-3.3.0/plugin/zoom-js/zoom.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>

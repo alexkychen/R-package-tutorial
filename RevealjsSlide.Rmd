@@ -1,0 +1,306 @@
+---
+title: "How to create an R package and use Git & Github for version control"
+subtitle: "***"
+author:  
+  - Alex Chen
+  - <small>EDIT</small>
+date: "<small>`r format(Sys.time(), '%d %B %Y')`</small>"
+output:
+  revealjs::revealjs_presentation:
+    incremental: true
+    highlight: pygments
+    theme: serif
+    center: true
+    transition: fade
+    css: custom.css
+    self_contained: false
+    reveal_plugins: ["zoom","notes"]
+
+---
+
+## Advantages of building an R package
+
+- Use functions and turn hundreds lines of code to a single or few lines of code. 
+
+- Orgainze your R script, data, and documentation in a well-defined structure.  
+
+- Collaborate and share your methods with others. Editing history traceable via git control.  
+
+- Use 'R CMD check' to validate your R script.  
+
+- Publishable work  
+
+<div class="notes">
+You may wonder why I would create my own package and what I can benefit from. Actually, there're quite a few advantages.
+First, a package basically comprises a set of functions, and you can pack your hundred lines    
+Second, when you're building your own package, it kind of forces you to organize...
+Third, creating a package actually makes it easier to collaborate and share...
+Fourth, it's probably not the attractive one, but you can use R built-in function to validate your R script
+Lastly, an R package itself can be a publishable work.
+</div>
+
+## R package structure 
+
+**A minimal package should include:**
+
+- R functions (saved in .R files)
+
+- Metadata (DESCRIPTION file)
+
+- Namespace (NAMESPACE file generated via roxygen2; connect your package to others)
+
+- Documentation (generated via roxygen2; help page)
+
+- Vignette (user guide)
+
+<div class="notes">
+Here are some basic components of an R package. First is the R functions...
+The most important content in an R package in the functions, so we will create an R package by starting to write R functions.
+</div>
+ 
+## Writing R functions can save your time down the road
+
+```{r, echo=FALSE, fig.height=5, warning=F}
+library(ggplot2);library(reshape2)
+Y.axis <- c(0:11)
+fun.user <- c(0:11)
+fun.writer <- c(0,3,4,5,5.5,6,6,6,6,6,6,6)
+df <- as.data.frame(cbind(Y.axis, fun.user, fun.writer))
+dfn <- melt(df, id="Y.axis")
+ggplot(dfn, aes(x=Y.axis, y=value, colour=variable))+
+  geom_smooth(se=F)+
+  ylab("Time")+xlab("Data size / complexity")+
+  theme_bw()+
+  theme(legend.position="none", axis.ticks=element_blank(), axis.text=element_blank(),
+        axis.title=element_text(size=22))+
+  annotate("text", x=7.3, y=10, label="non-function writer", size=9)+
+  annotate("text", x=9, y=5.3, label="function writer", size=9)
+
+```
+
+<div class="notes">
+Here is the plot to show you the difference between a function writer and non-function writer. If you are not a function writer, the time your spend on analyzing data or crafting your code tends to increase as your data size and complexity increase. However, if you'r a function writer, you may spend a little more time at the beginning, but it will save your time down the road. 
+</div>
+
+## How to write a function
+
+```{r, eval=F}
+Your_Function_Name <- function( Your_Variables ){
+  #Do something here
+}
+
+```
+. . . 
+
+Fecundity = a x Length ^b^
+
+. . . 
+
+```{r, message=FALSE, warning=FALSE}
+fecundity <- function(L){
+  y <- 0.002*(L^3)
+  return(y)
+}
+```
+. . . 
+
+```{r}
+fecundity(36)
+```
+
+## How to write a function
+
+Fecundity = a x Length ^b^
+
+```{r, message=F}
+fecundity <- function(L, a, b){
+  y <- a*(L^b)
+  return(y)
+}
+```
+. . .
+
+```{r}
+fecundity(L=36, a=0.002, b=3)
+```
+. . . 
+```{r}
+fecundity(L=36, a=0.2, b=3)
+```
+
+## Make your function useful
+
+Use conditional statement to choose an analytical method
+
+```{r }
+myFunction <- function(method="A"){
+  
+  if(method=="A"){
+    #Analyze data in this way
+  
+  }else if(method=="B"){
+    #Analyze data in that way
+  
+  }else if(method=="C"){
+    #Analzye data in that way
+    
+  }
+}
+```
+
+## Start an R package with git version control
+
+Your R package is built in your computer; 
+a copy can be saved in the cloud. They're syncronized via Git. 
+
+|    | Local | Cloud |
+|:--:|:-----:|:-----:| 
+| storage space | Your PC | Github.com  | 
+| software | RStudio | Git | 
+
+## Start an R package
+
+- Install R, RStudio, and [Git](https://git-scm.com/downloads) in your computer
+
+- Create a Github account [www.github.com](http://github.com)
+
+- [Create a new repository](pics/ScreenShot-Github-create-a-respository.png) / [Copy the repository's link](pics/ScreenShot-Github-copy-link.png)
+
+- Create an R project from RStudio
+    1. Open a new project
+    2. [Select version control](pics/ScreenShot-start-package-1-select-version-control.png)
+    3. [Select Git](pics/ScreenShot-start-package-2-select-Git.png)
+    4. [Paste URL](pics/ScreenShot-start-package-3-paste-URL.png)
+
+- Install library `devtools` and `roxygen2`
+
+- Set up R configuration
+
+## R configuration setup
+
+1. Select **Build** and then **Configure Build Tools** on [menu bar](pics/ScreenShot-Rconfigure-1-ConfigureBuildTools.png)
+
+2. Select **Package** in the pop-up window
+
+3. Check and configure [Roxygen options](pics/ScreenShot-Rconfigure-2-RoxygenOptions.png)
+
+4. Create folders **R** and **man**
+
+5. Create a text file named **DESCRIPTION**
+
+## Edit **DESCRIPTION** file
+
+Include the following information:
+
+```{r, eval=FALSE}
+Package: MyRpackage
+Version: 1.0
+Title: This is title of MyRpackage
+Author: Alex Chen
+Maintainer: Alex Chen <chen.1735@osu.edu>
+Description: A brief description about MyRpackage
+Depends: R (>= 3.1.0)
+License: GPL (>= 2)
+Imports: [Put other packages here if needed]
+
+```
+
+More details about DESCRIPTION
+
+[R official site](https://cran.r-project.org/doc/manuals/r-release/R-exts.html#The-DESCRIPTION-file)
+
+[by Hadley Wickham](http://r-pkgs.had.co.nz/description.html)
+
+
+## Write R function files
+
+Create function files (e.g., fecundity.R) \
+and save them in the **R** folder
+
+```{r, eval=F}
+#' A title of your function
+#'
+#' A short description about the function.
+#' @param L fish length
+#' @param a constant a
+#' @param b constant b
+#' @return This function returns fish fecundity
+#' @export
+#' @examples
+#' fecundity(36, 0.2, 3)
+
+fecundity <- function(L, a, b){
+  y <- a*(L^b)
+  return(y)
+}
+
+```
+
+We use [**roxygen2**](https://cran.r-project.org/web/packages/roxygen2/README.html) to generate functions' documentation.
+
+## Build your package in R
+
+- Click **Build & Reload** under [**Build** menu](pics/ScreenShot-BuildReloadPackage-1-click-Build-Reload.png)
+
+- Fix any issue if build not successful
+
+- Make sure to rebuild if any change was made
+
+- Try `?fecundiy` to see if help page shows up 
+
+## Sync with Github repository
+
+- Make sure the [Git program](https://git-scm.com/downloads) was installed.
+
+- Click **Commit** under **Git** [menu](pics/ScreenShot-GitSync-1-click-commit-under-git.png)
+
+- Check files and add commit message and then hit [**commit**](pics/ScreenShot-GitSync-2-check-commit-message.png)
+
+- Close commit message [window](pics/ScreenShot-GitSync-3-git-commit.png) 
+
+- Click [**Push**](pics/ScreenShot-GitSync-4-git-push.png) button to upload files to Github repository
+
+- Go to your Github site and see if files are updated
+
+## Exercise 
+
+- Go ahead and create a second R function
+
+- Rebuild your package locally, and then upload the file to your Github
+
+- Install the package of a person next to you. Use the following code:
+
+. . . 
+
+```{r, eval=F}
+library(devtools)
+
+install_github("ACCOUNT/XPACKAGE")
+
+```
+
+## Handle identical function names
+
+- Import the library: `library(XPACKAGE)`
+
+- Type `?fecundity` in R console (There should be two *fecundity* functions associated with different packages)
+
+- Type `?XPACKAGE::fecundity` to see the help page
+
+- Click **Index** at the bottom to see the second function
+
+- Run the second function to see if it works 
+
+## Further resources
+
+[One-page tutorial](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/) (by Hilary Parker)
+
+[R package primer](http://kbroman.org/pkg_primer/) (by Karl Broman)
+
+[R packages](http://r-pkgs.had.co.nz/) (by Hadley Wickham)
+
+[R official document](https://cran.r-project.org/doc/manuals/r-release/R-exts.html)
+
+### ~~~
+
+### Happy coding!
