@@ -17,7 +17,7 @@ output:
     reveal_plugins: ["zoom","notes"]
 
 ---
-## Link to this slide
+## Link to the slides
 
 [http://tinyurl.com/zzlzs2u](http://tinyurl.com/zzlzs2u)
 
