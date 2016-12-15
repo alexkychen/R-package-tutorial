@@ -11,6 +11,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="RevealjsSlide_files/reveal.js-3.3.0/css/reveal.css"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
 
 <style type="text/css">
@@ -355,12 +356,25 @@ fecundity &lt;-<span class="st"> </span>function(L, a, b){
         transition: 'fade', // none/fade/slide/convex/concave/zoom
         // Transition style for full page slide backgrounds
         backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+		//chalkboard plugin
+		chalkboard:{
+			// optionally load pre-recorded chalkboard drawing from file
+			src: "chalkboard.json",
+		},
 
         // Optional reveal.js plugins
         dependencies: [
           { src: 'RevealjsSlide_files/reveal.js-3.3.0/plugin/notes/notes.js', async: true },
           { src: 'RevealjsSlide_files/reveal.js-3.3.0/plugin/zoom-js/zoom.js', async: true },
-        ]
+		  { src: 'RevealjsSlide_files/reveal.js-3.3.0/plugin/chalkboard/chalkboard.js',async: true },
+        ],
+		keyboard: {
+        67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+        66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+        46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+         8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+        68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+		}
       });
     </script>
   <!-- dynamically load mathjax for compatibility with self-contained -->
